@@ -1,4 +1,5 @@
 using AgendaContatos.Context;
+using AgendaContatos.Mappings;
 using AgendaContatos.Repositories;
 using AgendaContatos.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -17,6 +18,7 @@ builder.Services.AddDbContext<AppDbContext>(op => op.UseSqlServer(connection,
                             x => x.MigrationsAssembly(typeof(AppDbContext).Assembly.FullName)));
 
 builder.Services.AddScoped<IContatoRepository, ContatoRepository>();
+builder.Services.AddAutoMapper(typeof(DomainToDTOProfile));
 
 var app = builder.Build();
 
