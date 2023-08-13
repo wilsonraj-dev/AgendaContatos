@@ -19,6 +19,11 @@ namespace AgendaContatos.Repositories
             return await _context.Contatos.AsNoTracking().ToListAsync();
         }
 
+        public async Task<Contato> GetContatoPeloId(int id)
+        {
+            return await _context.Contatos.FindAsync(id) ?? throw new ArgumentException();
+        }
+
         public async Task<IEnumerable<Contato>> GetContatosFavoritos()
         {
             return await _context.Contatos.AsNoTracking().Where(x => x.Favorito == 'Y').ToListAsync();

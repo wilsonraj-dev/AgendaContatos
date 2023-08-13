@@ -61,6 +61,7 @@ namespace AgendaContatos.Controllers
         }
 
         [HttpPost]
+        [Route("add-contato")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult> AddContatoAsync([FromBody] ContatoDTO contatoDTO)
@@ -70,9 +71,44 @@ namespace AgendaContatos.Controllers
                 return BadRequest("Dados inconsistentes foram detectados");
             }
 
-            var contato = _mapper.Map<Contato>(contatoDTO);
-            await _contatoRepository.AddAsync(contato);
-            return Ok(_mapper.Map<ContatoDTO>(contato));
+            await _contatoRepository.AddAsync(_mapper.Map<Contato>(contatoDTO));
+            return Ok(_mapper.Map<Contato>(contatoDTO));
+        }
+
+        [HttpPut]
+        [Route("update-contato/{id:int}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult> UpdateContatosAsync([FromBody] ContatoDTO contatoDTO, int id)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+            else if (id != contatoDTO.Id)
+            {
+                return BadRequest();
+            }
+
+            await _contatoRepository.UpdateAsync(_mapper.Map<Contato>(contatoDTO));
+            return Ok(contatoDTO);
+        }
+
+        [HttpDelete]
+        [Route("remove-contato/{id:int}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult> RemoveAsync(int id)
+        {
+            var contato = await _contatoRepository.GetContatoPeloId(id);
+
+            if (contato is null)
+            {
+                return BadRequest();
+            }
+
+            await _contatoRepository.RemoveAsync(contato.Id);
+            return NoContent();
         }
     }
 }
